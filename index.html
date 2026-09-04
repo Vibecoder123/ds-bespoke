@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DS Carpentry — Bespoke Joinery</title>
+<meta name="description" content="Bespoke feature walls, beds, and media units, made to measure. [Placeholder — confirm final copy with Dan.]" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,340;9..144,480;9..144,600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<style>
+  .hero{
+    position: relative;
+    min-height: 92vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  #starfield{ position: absolute; inset: 0; z-index: 0; display: block; }
+  .hero-overlay{
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(100deg, var(--bg) 0%, rgba(23,19,15,0.85) 32%, rgba(23,19,15,0.35) 58%, rgba(23,19,15,0.05) 78%);
+    pointer-events: none;
+  }
+  .hero-content{
+    position: relative; z-index: 2; max-width: 620px;
+    padding: 0 clamp(20px, 5vw, 64px);
+    opacity: 0; transform: translateY(14px);
+    animation: rise 900ms cubic-bezier(0.16, 1, 0.3, 1) 200ms forwards;
+  }
+  @keyframes rise{ to{ opacity: 1; transform: translateY(0); } }
+  .hero .sub{ font-size: clamp(1rem, 1.6vw, 1.15rem); max-width: 42ch; margin: 0.7em 0 1.8em; }
+  @media (max-width: 640px){
+    .hero-overlay{ background: linear-gradient(180deg, rgba(23,19,15,0.55) 0%, var(--bg) 68%); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero-content{ animation: none; opacity: 1; transform: none; }
+  }
+  .intro{ max-width: 640px; }
+  .cta-band{
+    background: var(--bg-lift);
+    padding: var(--space-section) 0;
+    text-align: left;
+  }
+  .cta-band .wrap{ display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+</style>
+</head>
+<body>
+
+<p class="dev-note wrap">Build in progress — placeholder copy and imagery throughout, pending Dan's photos and confirmed brand assets.</p>
+
+<header class="site-nav">
+  <a class="wordmark" href="index.html">DS Carpentry</a>
+  <ul class="nav-links">
+    <li><a href="index.html" aria-current="page">Home</a></li>
+    <li><a href="work.html">The Work</a></li>
+    <li><a href="process.html">Process</a></li>
+    <li><a href="contact.html" class="btn">Enquire</a></li>
+  </ul>
+</header>
+
+<section class="hero">
+  <canvas id="starfield" aria-hidden="true"></canvas>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <h1>Bespoke joinery, built the way a suite is built.</h1>
+    <p class="sub">Feature walls, beds, and media units made to measure, for rooms where nothing off-the-shelf is good enough.</p>
+    <a class="cta-link" href="work.html">See recent commissions</a>
+  </div>
+</section>
+
+<section>
+  <div class="wrap intro">
+    <h2>One workshop, one focus: bespoke joinery.</h2>
+    <p>DS Carpentry works exclusively on bespoke joinery — feature walls, statement beds, and made-to-measure media units, built around the room rather than adapted to fit it. [Placeholder — refine into Dan's own voice once confirmed.]</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Recent commissions</h2>
+    </div>
+    <div class="grid cols-3">
+      <div class="placeholder"><span>LED feature wall — photo pending</span></div>
+      <div class="placeholder"><span>Bali-style bed frame — photo pending</span></div>
+      <div class="placeholder"><span>Walnut media wall — photo pending</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2 style="max-width: 20ch;">Have a room that needs something nothing off-the-shelf can do?</h2>
+    <a class="btn" href="contact.html">Start a conversation</a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>DS Carpentry — serving within 30 miles of Basingstoke</p>
+    <p><a href="contact.html">[email placeholder]</a> · [phone placeholder]</p>
+  </div>
+</footer>
+
+<script type="module">
+  import { initStarfield } from './js/starfield.js';
+  initStarfield('starfield');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Contact — DS Carpentry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,340;9..144,480;9..144,600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<p class="dev-note wrap">Form is NOT wired to a backend yet — it will not deliver a submission right now. Per standard practice on every other client build: confirm a Formspree (or equivalent) endpoint, test end-to-end, and build a real error state before this ever goes live. Do not treat the presence of this markup as "done."</p>
+
+<header class="site-nav bordered">
+  <a class="wordmark" href="index.html">DS Carpentry</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="work.html">The Work</a></li>
+    <li><a href="process.html">Process</a></li>
+    <li><a href="contact.html" class="btn" aria-current="page">Enquire</a></li>
+  </ul>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="section-head" style="max-width: 560px;">
+      <h1>Start a conversation</h1>
+      <p style="margin-top: 0.6em;">Tell us a little about the room and what you have in mind. [Placeholder intro copy.]</p>
+    </div>
+
+    <form class="contact-form" action="#" method="POST">
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" required autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="phone">Phone (optional)</label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label for="message">Tell us about the project</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+      </div>
+      <button class="submit" type="submit">Send enquiry</button>
+    </form>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>DS Carpentry — serving within 30 miles of Basingstoke</p>
+    <p><a href="contact.html">[email placeholder]</a> · [phone placeholder]</p>
+  </div>
+</footer>
+
+</body>
+</html>
