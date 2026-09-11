@@ -3,50 +3,424 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>DS Carpentry — Bespoke Joinery</title>
-<meta name="description" content="Bespoke feature walls, beds, and media units, made to measure. [Placeholder — confirm final copy with Dan.]" />
+<title>DS CARPENTRY — PROJECT REFERENCE (present-state single-source-of-truth, not a live page)</title>
+
+<!--
+=====================================================================
+  DS CARPENTRY — PRESENT-STATE REFERENCE DOCUMENT
+  Purpose: single-source-of-truth for a fresh/dedicated Claude project.
+  This file is NOT the live site. It's all four real pages from the
+  live repo, concatenated in one place for reference, plus this
+  metadata block. Do not treat it as something to deploy.
+
+  LIVE SOURCE OF TRUTH: https://github.com/Vibecoder123/ds-bespoke
+  (public — verify against it directly with a codeload tarball pull
+  rather than trusting this doc blindly, the moment it might be stale)
+
+  CLIENT
+  - Dan Smith, trading as "DS Carpentry" — bespoke joinery, Basingstoke
+  - Travels up to 30 miles
+  - Budget: £850 — single-focus premium bespoke launch site, timed for
+    the 2026 winter season (Dan is going bespoke-only through winter,
+    dropping general carpentry work — this is business context for us,
+    NOT customer-facing copy; the site itself never mentions seasonality)
+
+  SCOPE
+  - In scope for the £850: the 4 pages below only.
+  - Explicitly OUT of scope, deferred to a separately-priced Phase 2:
+    blog, expanded service pages, SEO strategy. Do not build toward
+    this ahead of a written, priced agreement — confirmed scope-creep
+    risk was caught and corrected once already this project.
+  - STILL OPEN, never confirmed: whether 4 pages actually matches what
+    was quoted to Dan. Get an explicit yes/no before assuming further.
+
+  STACK
+  - Vanilla HTML/CSS/JS. No build step, no framework, no bundler.
+  - Deployment: Cloudflare Pages (build command: none, output dir: /)
+  - Repo: github.com/Vibecoder123/ds-bespoke (public)
+  - Local path: ~/Bootcamp-sandbox/bootcamp/ds-bespoke — this folder
+    needs its OWN independent .git; it sits inside a larger course-era
+    monorepo (Bootcamp-sandbox) that must never be the one git treats
+    as the working tree for this project. Verify with
+    `git rev-parse --show-toplevel` before any git command if unsure.
+
+  DESIGN SYSTEM
+  - Palette: warm timber-dark, not generic near-black.
+    --bg:#17130F  --bg-lift:#221B14  --ink:#F2EBE1  --ink-soft:#B7AC9C
+    --brass:#C89B5C  --ember:#E8A659  --line:#382C20
+  - Type: Fraunces (headings) + Manrope (body/UI), via Google Fonts CDN
+    (NOT vendored — a conscious low-risk gap, unlike the JS one below)
+  - The hero starfield effect is deliberately the ONE bold visual
+    move on the whole site — it exists only on the homepage, not
+    repeated per-page, so it stays a signature moment rather than
+    wallpaper.
+
+  KNOWN GAPS — confirmed against the live repo, not assumed:
+  1. Contact form (contact.html) is markup only — `action="#"`,
+     no real backend. Needs a Formspree (or equivalent) endpoint,
+     tested end-to-end, before this is anywhere near "done."
+  2. Dan's photos have not been delivered. All six gallery slots and
+     the homepage's 3-item teaser are CSS placeholder blocks, not
+     real images.
+  3. Contact details (phone/email) are bracketed placeholders pending
+     confirmation from Dan.
+  4. Bio (process.html) is deliberately Lorem Ipsum for now, per
+     explicit instruction — not a mistake, don't "fix" it unprompted.
+  5. Process steps (process.html) are generic placeholder copy, left
+     that way on purpose for now.
+  6. Logo: AI-generated assets from Dan's daughter were reviewed and
+     rejected (raster not vector, 4 competing typefaces, tagline
+     contradicted the bespoke-only positioning). A text wordmark
+     ("DS Carpentry" in Fraunces) stands in until a proper vector
+     redraw happens — a referral contact exists (via the Brickhaus
+     project) but terms were never formalized in writing.
+  7. robots.txt / sitemap.xml are not yet meaningfully filled in.
+  8. No confirmed domain name for DS Carpentry yet — never established
+     in any session so far. Needed before real launch/DNS work.
+
+  NOTE ON THREE.JS: as of this doc, the vendoring fix (swapping the
+  jsDelivr CDN import in js/starfield.js for a local
+  js/vendor/three.module.min.js, sourced from registry.npmjs.org) was
+  being applied by the user in parallel with this doc's creation.
+  VERIFY it actually landed — pull the live repo fresh and check
+  js/starfield.js's import line and the presence of js/vendor/ —
+  before assuming it's true. Don't take this note as confirmation.
+
+  WRITING STANDARDS
+  This project's copy follows the "Copy that reads human, not
+  generated" rules in the client-build-standards skill — no em dashes
+  as asides, no stock filler phrases, no unsupported superlatives, no
+  forced rule-of-three, ground every claim in something specific to
+  this business. If client-build-standards isn't active in this fresh
+  project yet, treat that skill file as required reading alongside
+  this document, not optional.
+=====================================================================
+-->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,340;9..144,480;9..144,600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/styles.css">
+
 <style>
-  .hero{
-    position: relative;
-    min-height: 92vh;
-    display: flex;
-    align-items: center;
-    overflow: hidden;
-  }
-  #starfield{ position: absolute; inset: 0; z-index: 0; display: block; }
-  .hero-overlay{
-    position: absolute; inset: 0; z-index: 1;
-    background: linear-gradient(100deg, var(--bg) 0%, rgba(23,19,15,0.85) 32%, rgba(23,19,15,0.35) 58%, rgba(23,19,15,0.05) 78%);
-    pointer-events: none;
-  }
-  .hero-content{
-    position: relative; z-index: 2; max-width: 620px;
-    padding: 0 clamp(20px, 5vw, 64px);
-    opacity: 0; transform: translateY(14px);
-    animation: rise 900ms cubic-bezier(0.16, 1, 0.3, 1) 200ms forwards;
-  }
-  @keyframes rise{ to{ opacity: 1; transform: translateY(0); } }
-  .hero .sub{ font-size: clamp(1rem, 1.6vw, 1.15rem); max-width: 42ch; margin: 0.7em 0 1.8em; }
-  @media (max-width: 640px){
-    .hero-overlay{ background: linear-gradient(180deg, rgba(23,19,15,0.55) 0%, var(--bg) 68%); }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .hero-content{ animation: none; opacity: 1; transform: none; }
-  }
-  .intro{ max-width: 640px; }
-  .cta-band{
-    background: var(--bg-lift);
-    padding: var(--space-section) 0;
-    text-align: left;
-  }
-  .cta-band .wrap{ display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+/* ============ css/styles.css — shared stylesheet, embedded verbatim ============ */
+:root{
+  --bg: #17130F;
+  --bg-lift: #221B14;
+  --bg-lift-2: #2A2115;
+  --ink: #F2EBE1;
+  --ink-soft: #B7AC9C;
+  --ink-faint: #7C7364;
+  --brass: #C89B5C;
+  --ember: #E8A659;
+  --line: #382C20;
+  --line-soft: #2A2119;
+
+  --space-section: clamp(64px, 10vw, 120px);
+  --space-lg: clamp(32px, 5vw, 64px);
+  --space-md: clamp(20px, 3vw, 36px);
+  --container: 1180px;
+}
+
+*{ box-sizing: border-box; }
+
+html, body{
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Manrope', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a{ color: inherit; }
+img{ max-width: 100%; display: block; }
+
+:focus-visible{
+  outline: 2px solid var(--brass);
+  outline-offset: 3px;
+}
+
+.wrap{
+  max-width: var(--container);
+  margin: 0 auto;
+  padding-left: clamp(20px, 5vw, 64px);
+  padding-right: clamp(20px, 5vw, 64px);
+}
+
+h1, h2, h3{
+  font-family: 'Fraunces', serif;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+h1{ font-weight: 340; font-size: clamp(2.4rem, 5.5vw, 4rem); max-width: 14ch; }
+h2{ font-size: clamp(1.7rem, 3.2vw, 2.4rem); max-width: 16ch; }
+h3{ font-size: clamp(1.15rem, 1.8vw, 1.4rem); font-weight: 500; }
+
+p{ line-height: 1.65; color: var(--ink-soft); margin: 0; }
+p + p{ margin-top: 1em; }
+
+.eyebrow{
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.85rem;
+  color: var(--brass);
+  margin: 0 0 0.6em;
+}
+
+.site-nav{
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: clamp(20px, 4vw, 32px) clamp(20px, 5vw, 64px);
+}
+
+.site-nav.bordered{ border-bottom: 1px solid var(--line-soft); }
+
+.wordmark{
+  font-family: 'Fraunces', serif;
+  font-weight: 480;
+  font-size: 1.15rem;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+}
+
+.wordmark span{ color: var(--ink-soft); font-weight: 400; }
+
+.nav-links{
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 3vw, 36px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a{
+  text-decoration: none;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  transition: color 180ms ease;
+}
+
+.nav-links a:hover, .nav-links a[aria-current="page"]{ color: var(--ink); }
+
+.btn{
+  display: inline-block;
+  font-size: 0.95rem;
+  text-decoration: none;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  padding: 0.6em 1.3em;
+  border-radius: 2px;
+  transition: border-color 180ms ease, color 180ms ease;
+}
+
+.btn:hover{ border-color: var(--brass); color: var(--brass); }
+
+.cta-link{
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--ink);
+  border-bottom: 1px solid var(--brass);
+  padding-bottom: 0.2em;
+  transition: color 180ms ease;
+}
+
+.cta-link:hover{ color: var(--brass); }
+
+section{ padding: var(--space-section) 0; }
+section + section{ padding-top: 0; }
+
+.section-head{ margin-bottom: var(--space-lg); }
+
+.placeholder{
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border: 1px dashed var(--line);
+  background:
+    repeating-linear-gradient(135deg, rgba(200,155,92,0.05) 0 2px, transparent 2px 14px),
+    var(--bg-lift);
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  border-radius: 2px;
+}
+
+.placeholder span{
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--ink-faint);
+}
+
+.grid{
+  display: grid;
+  gap: clamp(20px, 3vw, 32px);
+}
+
+.grid.cols-3{ grid-template-columns: repeat(3, 1fr); }
+.grid.cols-2{ grid-template-columns: repeat(2, 1fr); }
+
+@media (max-width: 860px){
+  .grid.cols-3{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px){
+  .grid.cols-3, .grid.cols-2{ grid-template-columns: 1fr; }
+  .site-nav{ flex-direction: column; align-items: flex-start; gap: 14px; }
+  .nav-links{ flex-wrap: wrap; gap: 16px; }
+}
+
+.steps{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.step{
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 20px;
+  padding-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.step:last-child{ border-bottom: none; padding-bottom: 0; }
+
+.step-num{
+  font-family: 'Fraunces', serif;
+  font-size: 1.3rem;
+  color: var(--brass);
+}
+
+.site-footer{
+  border-top: 1px solid var(--line-soft);
+  padding: var(--space-lg) 0;
+  margin-top: var(--space-section);
+}
+
+.site-footer .wrap{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.site-footer p{ font-size: 0.9rem; color: var(--ink-faint); }
+.site-footer a{ color: var(--ink-soft); text-decoration: none; }
+.site-footer a:hover{ color: var(--brass); }
+
+.dev-note{
+  background: var(--bg-lift-2);
+  border: 1px solid var(--line);
+  color: var(--ink-faint);
+  font-size: 0.8rem;
+  padding: 10px 16px;
+  margin: 0 auto var(--space-md);
+  max-width: var(--container);
+  border-radius: 2px;
+}
+
+form.contact-form{
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 520px;
+}
+
+.field{ display: flex; flex-direction: column; gap: 6px; }
+.field label{ font-size: 0.9rem; color: var(--ink-soft); }
+
+.field input, .field textarea{
+  background: var(--bg-lift);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-family: 'Manrope', sans-serif;
+  font-size: 1rem;
+  padding: 0.75em 0.9em;
+  border-radius: 2px;
+}
+
+.field input:focus, .field textarea:focus{
+  outline: 2px solid var(--brass);
+  outline-offset: 1px;
+  border-color: var(--brass);
+}
+
+button.submit{
+  align-self: flex-start;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.95rem;
+  color: var(--bg);
+  background: var(--brass);
+  border: none;
+  padding: 0.75em 1.6em;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 180ms ease;
+}
+
+button.submit:hover{ background: var(--ember); }
+
+/* ============ index.html's extra inline <style> block, embedded verbatim ============ */
+.hero{
+  position: relative;
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+#starfield{ position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; }
+.hero-overlay{
+  position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(100deg, var(--bg) 0%, rgba(23,19,15,0.85) 32%, rgba(23,19,15,0.35) 58%, rgba(23,19,15,0.05) 78%);
+  pointer-events: none;
+}
+.hero-content{
+  position: relative; z-index: 2; max-width: 620px;
+  padding: 0 clamp(20px, 5vw, 64px);
+  opacity: 0; transform: translateY(14px);
+  animation: rise 900ms cubic-bezier(0.16, 1, 0.3, 1) 200ms forwards;
+}
+@keyframes rise{ to{ opacity: 1; transform: translateY(0); } }
+.hero .sub{ font-size: clamp(1rem, 1.6vw, 1.15rem); max-width: 42ch; margin: 0.7em 0 1.8em; }
+@media (max-width: 640px){
+  .hero-overlay{ background: linear-gradient(180deg, rgba(23,19,15,0.55) 0%, var(--bg) 68%); }
+}
+@media (prefers-reduced-motion: reduce){
+  .hero-content{ animation: none; opacity: 1; transform: none; }
+}
+.intro{ max-width: 640px; }
+.cta-band{
+  background: var(--bg-lift);
+  padding: var(--space-section) 0;
+  text-align: left;
+}
+.cta-band .wrap{ display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+
+/* ============ divider styling for this reference doc only — not part of the real site ============ */
+.ref-divider{
+  background: #000;
+  color: var(--brass);
+  font-family: 'Manrope', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 6px clamp(20px, 5vw, 64px);
+  border-top: 4px solid var(--brass);
+  border-bottom: 4px solid var(--brass);
+}
 </style>
 </head>
 <body>
+
+<div class="ref-divider">REFERENCE FILE — SOURCE: index.html (nav links below are inert in this merged doc)</div>
 
 <p class="dev-note wrap">Build in progress — placeholder copy and imagery throughout, pending Dan's photos and confirmed brand assets.</p>
 
@@ -108,6 +482,170 @@
   import { initStarfield } from './js/starfield.js';
   initStarfield('starfield');
 </script>
+
+<div class="ref-divider">REFERENCE FILE — SOURCE: work.html</div>
+
+<p class="dev-note wrap">Placeholder gallery — swap each block for a real photo the moment Dan's set lands. Category labels are guesses; confirm actual piece names/descriptions with him.</p>
+
+<header class="site-nav bordered">
+  <a class="wordmark" href="index.html">DS Carpentry</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="work.html" aria-current="page">The Work</a></li>
+    <li><a href="process.html">Process</a></li>
+    <li><a href="contact.html" class="btn">Enquire</a></li>
+  </ul>
+</header>
+
+<section>
+  <div class="wrap section-head">
+    <h1>The Work</h1>
+    <p style="margin-top: 0.6em; max-width: 50ch;">A selection of recent bespoke commissions. [Placeholder intro — one or two lines from Dan on what ties these pieces together.]</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="grid cols-3">
+      <figure class="placeholder" style="margin:0;"><span>LED feature wall — photo pending</span></figure>
+      <figure class="placeholder" style="margin:0;"><span>Bali-style bed frame — photo pending</span></figure>
+      <figure class="placeholder" style="margin:0;"><span>Walnut media wall — photo pending</span></figure>
+      <figure class="placeholder" style="margin:0;"><span>Oak slat feature wall — photo pending</span></figure>
+      <figure class="placeholder" style="margin:0;"><span>Media wall, ambient lighting — photo pending</span></figure>
+      <figure class="placeholder" style="margin:0;"><span>Bespoke headboard — photo pending</span></figure>
+    </div>
+  </div>
+</section>
+
+<section style="text-align:left;">
+  <div class="wrap">
+    <a class="cta-link" href="contact.html">Discuss a commission</a>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>DS Carpentry — serving within 30 miles of Basingstoke</p>
+    <p><a href="contact.html">[email placeholder]</a> · [phone placeholder]</p>
+  </div>
+</footer>
+
+<div class="ref-divider">REFERENCE FILE — SOURCE: process.html</div>
+
+<p class="dev-note wrap">Placeholder bio and process copy — needs Dan's actual background, materials, and real step names before this goes live.</p>
+
+<header class="site-nav bordered">
+  <a class="wordmark" href="index.html">DS Carpentry</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="work.html">The Work</a></li>
+    <li><a href="process.html" aria-current="page">Process</a></li>
+    <li><a href="contact.html" class="btn">Enquire</a></li>
+  </ul>
+</header>
+
+<section>
+  <div class="wrap" style="max-width: 680px;">
+    <h1>About the workshop</h1>
+    <p style="margin-top: 0.8em;">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <h2>How a commission comes together</h2>
+    </div>
+    <ol class="steps">
+      <li class="step">
+        <span class="step-num">1</span>
+        <div>
+          <h3>Consultation</h3>
+          <p>[Placeholder — how Dan runs an initial visit: what he needs from the client, what he's assessing on-site.]</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">2</span>
+        <div>
+          <h3>Design &amp; materials</h3>
+          <p>[Placeholder — how a design is proposed, timber/material choices, how LED or lighting work is planned in.]</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">3</span>
+        <div>
+          <h3>Build</h3>
+          <p>[Placeholder — workshop process, typical build timeframes.]</p>
+        </div>
+      </li>
+      <li class="step">
+        <span class="step-num">4</span>
+        <div>
+          <h3>Install</h3>
+          <p>[Placeholder — what installation day looks like, any aftercare.]</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>DS Carpentry — serving within 30 miles of Basingstoke</p>
+    <p><a href="contact.html">[email placeholder]</a> · [phone placeholder]</p>
+  </div>
+</footer>
+
+<div class="ref-divider">REFERENCE FILE — SOURCE: contact.html</div>
+
+<p class="dev-note wrap">Form is NOT wired to a backend yet — it will not deliver a submission right now. Per standard practice on every other client build: confirm a Formspree (or equivalent) endpoint, test end-to-end, and build a real error state before this ever goes live. Do not treat the presence of this markup as "done."</p>
+
+<header class="site-nav bordered">
+  <a class="wordmark" href="index.html">DS Carpentry</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="work.html">The Work</a></li>
+    <li><a href="process.html">Process</a></li>
+    <li><a href="contact.html" class="btn" aria-current="page">Enquire</a></li>
+  </ul>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="section-head" style="max-width: 560px;">
+      <h1>Start a conversation</h1>
+      <p style="margin-top: 0.6em;">Tell us a little about the room and what you have in mind. [Placeholder intro copy.]</p>
+    </div>
+
+    <form class="contact-form" action="#" method="POST">
+      <div class="field">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" required autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="phone">Phone (optional)</label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label for="message">Tell us about the project</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+      </div>
+      <button class="submit" type="submit">Send enquiry</button>
+    </form>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>DS Carpentry — serving within 30 miles of Basingstoke</p>
+    <p><a href="contact.html">[email placeholder]</a> · [phone placeholder]</p>
+  </div>
+</footer>
 
 </body>
 </html>
