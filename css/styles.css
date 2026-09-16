@@ -161,11 +161,40 @@ section + section{ padding-top: 0; }
   color: var(--ink-faint);
 }
 
+/* ---------- Photo tiles (populated gallery/teaser slots) ---------- */
+
+.photo{
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--bg-lift);
+}
+
+.photo.tall{ aspect-ratio: 3 / 4; }
+
+.photo img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.photo.tall img{ object-position: center top; }
+
+.photo figcaption{
+  margin-top: 0.6em;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--ink-faint);
+}
+
 /* ---------- Grid ---------- */
 
 .grid{
   display: grid;
   gap: clamp(20px, 3vw, 32px);
+  align-items: start;
 }
 
 .grid.cols-3{ grid-template-columns: repeat(3, 1fr); }
@@ -178,6 +207,25 @@ section + section{ padding-top: 0; }
   .grid.cols-3, .grid.cols-2{ grid-template-columns: 1fr; }
   .site-nav{ flex-direction: column; align-items: flex-start; gap: 14px; }
   .nav-links{ flex-wrap: wrap; gap: 16px; }
+}
+
+/* Masonry columns — for galleries mixing landscape and tall photo tiles,
+   so a shorter tile doesn't leave dead space under it in a grid row. */
+.gallery-masonry{
+  column-count: 3;
+  column-gap: clamp(20px, 3vw, 32px);
+}
+
+.gallery-masonry .photo{
+  break-inside: avoid;
+  margin-bottom: clamp(20px, 3vw, 32px);
+}
+
+@media (max-width: 860px){
+  .gallery-masonry{ column-count: 2; }
+}
+@media (max-width: 560px){
+  .gallery-masonry{ column-count: 1; }
 }
 
 /* ---------- Process steps (genuinely sequential — numbering earned) ---------- */
