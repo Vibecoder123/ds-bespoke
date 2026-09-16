@@ -166,27 +166,92 @@ section + section{ padding-top: 0; }
 .photo{
   position: relative;
   aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: 2px;
   background: var(--bg-lift);
 }
 
 .photo.tall{ aspect-ratio: 3 / 4; }
-
-.photo img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-
-.photo.tall img{ object-position: center top; }
 
 .photo figcaption{
   margin-top: 0.6em;
   font-size: 0.85rem;
   font-style: italic;
   color: var(--ink-faint);
+}
+
+/* Flip card — click or keyboard (Enter/Space) reveals a blurb on the back.
+   The box-shadow is a warm ember glow, deliberately steady rather than
+   flickering: the starfield stays the one animated signature moment. */
+.flip-card{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 1200px;
+  border-radius: 2px;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px var(--line),
+    0 12px 40px -6px rgba(232, 166, 89, 0.55),
+    0 4px 16px rgba(0, 0, 0, 0.5);
+  transition: box-shadow 240ms ease;
+}
+
+.flip-card:hover,
+.flip-card:focus-visible{
+  box-shadow:
+    0 0 0 1px var(--brass),
+    0 16px 54px -4px rgba(232, 166, 89, 0.75),
+    0 5px 20px rgba(0, 0, 0, 0.55);
+  outline: none;
+}
+
+.flip-card-inner{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  transition: transform 550ms cubic-bezier(0.4, 0.15, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.flip-card.is-flipped .flip-card-inner{
+  transform: rotateY(180deg);
+}
+
+.flip-card-face{
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.flip-card-front img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.photo.tall .flip-card-front img{ object-position: center top; }
+
+.flip-card-back{
+  transform: rotateY(180deg);
+  background: var(--bg-lift);
+  border: 1px solid var(--line);
+  padding: clamp(16px, 3vw, 22px);
+  display: flex;
+  align-items: center;
+}
+
+.flip-card-back p{
+  font-size: 0.9rem;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .flip-card-inner{ transition: none; }
 }
 
 /* ---------- Grid ---------- */
