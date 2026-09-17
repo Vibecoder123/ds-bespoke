@@ -49,10 +49,9 @@
     line-height: 1;
     color: var(--brass, #C89B5C);
     opacity: 0;
-    transform: scale(1);
-    transform-origin: 50% 50%;
-    transition: opacity 800ms ease, transform 1900ms cubic-bezier(0.75,0,1,1);
-    will-change: transform, opacity;
+    /* No transform here — font-size is animated directly so every frame is
+       a real layout/paint of vector text, not a stretched cached bitmap. */
+    transition: opacity 800ms ease, font-size 1900ms cubic-bezier(0.75,0,1,1);
   }
   .hero .sub{ font-size: clamp(1rem, 1.6vw, 1.15rem); max-width: 42ch; margin: 0.7em 0 1.8em; }
   @media (max-width: 640px){
@@ -74,7 +73,7 @@
 <body>
 
 <div class="intro-overlay" id="bespoke-overlay">
-  <h1 class="reveal-text" id="bespoke-text">Besp<span id="bespoke-target-letter">o</span>ke</h1>
+  <h1 class="reveal-text" id="bespoke-text">Bespoke</h1>
 </div>
 
 <p class="dev-note wrap">Build in progress — teaser photos are in, body copy still placeholder pending confirmed brand assets and Dan's own voice.</p>
@@ -179,20 +178,12 @@
 (function(){
   var overlay = document.getElementById('bespoke-overlay');
   var text = document.getElementById('bespoke-text');
-  var targetLetter = document.getElementById('bespoke-target-letter');
   var heroContent = document.querySelector('.hero-content');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // Reduced motion: CSS already shows hero-content at rest and hides the
   // overlay outright, so there is nothing for this script to trigger.
-  if (reduced || !overlay || !text || !targetLetter) return;
-
-  function setOriginToLetter(){
-    var rect = targetLetter.getBoundingClientRect();
-    var ox = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
-    var oy = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
-    text.style.transformOrigin = ox + '% ' + oy + '%';
-  }
+  if (reduced || !overlay || !text) return;
 
   var FADE_IN = 800;
   var HOLD = 600;
@@ -200,15 +191,13 @@
   var TEXT_FADE_OUT_START = ZOOM_START + 1300;   // ~68% through the zoom
   var OVERLAY_FADE_START = TEXT_FADE_OUT_START + 300;
   var OVERLAY_FADE_DURATION = 900;
-
-  setOriginToLetter();
+  var END_SIZE = '300vmax'; // comfortably clears any real viewport in every direction
 
   requestAnimationFrame(function(){
     requestAnimationFrame(function(){
       text.style.opacity = 1;
       setTimeout(function(){
-        setOriginToLetter();
-        text.style.transform = 'scale(24)';
+        text.style.fontSize = END_SIZE;
       }, ZOOM_START);
       setTimeout(function(){
         text.style.opacity = 0;
