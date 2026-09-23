@@ -54,35 +54,39 @@
     transition: opacity 800ms ease, font-size 1900ms cubic-bezier(0.75,0,1,1);
   }
   .intro-overlay .intro-lockup{
-    position: relative;
     display: inline-block;
   }
   .intro-overlay .reveal-subname{
-    /* Anchored to Bespoke's own box now, not centered above the whole
-       word — left:0 aligns to the "B", JS sets width to the measured
-       width of "Bespok" (through the "k", excluding the trailing "e")
-       and stretches letter-spacing to fill it exactly, same principle
-       as the BOSS/RALPH LAUREN references. --subname-scale is size
-       relative to Bespoke's own clamp(); --subname-drop pulls it down
-       out of the font's empty ascender space so the underline sits at
-       Bespoke's actual cap-height instead of floating above it like a
-       chapter heading; --subname-underline-gap is the text-to-rule gap. */
-    --subname-scale: 0.19;
-    --subname-drop: 0.16;
-    --subname-underline-gap: 0.22em;
-    position: absolute;
-    left: 0;
-    bottom: calc(100% - (clamp(4rem, 19vw, 13.5rem) * var(--subname-drop)));
+    /* position:fixed with explicit px left/top, computed once by JS while
+       Bespoke is still at rest (see positionSubname()). This is deliberate:
+       the previous version used "bottom: calc(100% - ...)", a percentage
+       of Bespoke's OWN box height — during the dive that height rockets
+       toward 300vmax, so the percentage rocketed with it and dragged the
+       name off toward the top-left before its fade even finished. Fixed
+       px positioning can't be re-triggered by Bespoke's own animation.
+       --subname-scale sizes it relative to Bespoke's resting clamp();
+       --subname-drop controls how far down into the ascender gap it sits;
+       --subname-tracking is letter-spacing — wider now so the name reads
+       as premium and fills more of the B–k gap on its own, no forced
+       width-stretch needed; --subname-underline-gap is the space between
+       the text and its rule — kept tight so the rule reads as this text's
+       underline, not a separate eyebrow line sitting above Bespoke. */
+    --subname-scale: 0.13;
+    --subname-drop: 0.35;
+    --subname-tracking: 0.5em;
+    --subname-underline-gap: 0.18em;
+    position: fixed;
     margin: 0;
+    padding: 0 0.35em var(--subname-underline-gap);
+    white-space: nowrap;
     text-align: center;
     font-family: 'Cinzel', serif; /* per Dan's mock — replaces Mokoto/Manrope */
     font-weight: 700;
-    letter-spacing: 0.18em; /* base tracking — JS stretches this further to fit the B–k span */
+    letter-spacing: var(--subname-tracking);
     text-transform: uppercase;
     font-size: calc(clamp(4rem, 19vw, 13.5rem) * var(--subname-scale));
     color: var(--ember, #E8A659);
-    padding-bottom: var(--subname-underline-gap);
-    border-bottom: 0.06em solid var(--ember, #E8A659);
+    border-bottom: 0.06em solid var(--ember, #E8A659); /* hugs the text + padding above, not the full B–k span */
     opacity: 0;
     transition: opacity 700ms ease;
   }
@@ -233,15 +237,22 @@
   var OVERLAY_FADE_DURATION = 900;
   var END_SIZE = '300vmax'; // comfortably clears any real viewport in every direction
 
-  // Measures the rendered width of "Bespok" (i.e. through the "k",
-  // excluding the trailing "e" — the span Dan's mock nests the name
-  // inside) and stretches the subname's letter-spacing so it fills
-  // that width exactly, rather than floating centered above the word.
-  function fitSubname(){
+  // Positions the subname ONCE, in fixed px, while Bespoke is still at
+  // its resting size — never recalculated against Bespoke's own box
+  // during the dive, which is what caused the previous "fly off" bug.
+  // Horizontally it's centred on the midpoint of "Bespok" (through the
+  // "k", excluding the trailing "e" — the span it should sit within);
+  // its own width stays natural, so the underline hugs the words
+  // themselves (plus the small CSS padding) rather than spanning the
+  // full B–k gap.
+  function positionSubname(){
     if (!subname) return;
-    var full = text.textContent;
-    var bkSpan = full.slice(0, full.length - 1);
+    subname.style.left = '';
+    subname.style.top = '';
+
+    var mainRect = text.getBoundingClientRect();
     var mainStyle = getComputedStyle(text);
+    var bkSpan = text.textContent.slice(0, text.textContent.length - 1);
 
     var probe = document.createElement('span');
     probe.style.cssText = 'position:absolute; visibility:hidden; white-space:nowrap; top:-9999px; left:-9999px;'
@@ -251,46 +262,56 @@
       + 'letter-spacing:' + mainStyle.letterSpacing + ';';
     probe.textContent = bkSpan;
     document.body.appendChild(probe);
-    var targetWidth = probe.getBoundingClientRect().width;
+    var bkCenterX = mainRect.left + (probe.getBoundingClientRect().width / 2);
     document.body.removeChild(probe);
 
-    subname.style.letterSpacing = '';
-    var baseSpacing = parseFloat(getComputedStyle(subname).letterSpacing) || 0;
-    var naturalWidth = subname.getBoundingClientRect().width;
-    var gaps = subname.textContent.trim().length - 1;
+    var dropRatio = parseFloat(getComputedStyle(subname).getPropertyValue('--subname-drop')) || 0.35;
+    var dropPx = parseFloat(mainStyle.fontSize) * dropRatio;
+    var subRect = subname.getBoundingClientRect();
 
-    if (gaps > 0 && targetWidth > naturalWidth){
-      var addSpacing = (targetWidth - naturalWidth) / gaps;
-      subname.style.letterSpacing = (baseSpacing + addSpacing) + 'px';
-    }
-    subname.style.width = targetWidth + 'px';
+    subname.style.left = (bkCenterX - subRect.width / 2) + 'px';
+    subname.style.top = (mainRect.top - subRect.height + dropPx) + 'px';
   }
 
-  fitSubname();
-  window.addEventListener('resize', fitSubname);
+  function playIntro(){
+    positionSubname();
 
-  requestAnimationFrame(function(){
     requestAnimationFrame(function(){
-      text.style.opacity = 1;
-      if (subname) subname.classList.add('is-visible');
-      setTimeout(function(){
-        text.style.fontSize = END_SIZE;
-        if (subname) subname.classList.remove('is-visible');
-      }, ZOOM_START);
-      setTimeout(function(){
-        text.style.opacity = 0;
-      }, TEXT_FADE_OUT_START);
-      setTimeout(function(){
-        overlay.style.opacity = 0;
-      }, OVERLAY_FADE_START);
-      setTimeout(function(){
-        overlay.style.visibility = 'hidden';
-        overlay.style.pointerEvents = 'none';
-        // Headline rise triggers here — the instant the overlay is fully
-        // out of the way, not on page load.
-        if (heroContent) heroContent.classList.add('rise-in');
-      }, OVERLAY_FADE_START + OVERLAY_FADE_DURATION);
+      requestAnimationFrame(function(){
+        text.style.opacity = 1;
+        if (subname) subname.classList.add('is-visible');
+        setTimeout(function(){
+          text.style.fontSize = END_SIZE;
+          if (subname) subname.classList.remove('is-visible');
+        }, ZOOM_START);
+        setTimeout(function(){
+          text.style.opacity = 0;
+        }, TEXT_FADE_OUT_START);
+        setTimeout(function(){
+          overlay.style.opacity = 0;
+        }, OVERLAY_FADE_START);
+        setTimeout(function(){
+          overlay.style.visibility = 'hidden';
+          overlay.style.pointerEvents = 'none';
+          // Headline rise triggers here — the instant the overlay is fully
+          // out of the way, not on page load.
+          if (heroContent) heroContent.classList.add('rise-in');
+        }, OVERLAY_FADE_START + OVERLAY_FADE_DURATION);
+      });
     });
+  }
+
+  // Wait for Cinzel/Fraunces to actually be loaded before measuring or
+  // revealing anything — measuring against a pre-swap fallback font was
+  // a real risk the previous version didn't guard against.
+  if (document.fonts && document.fonts.ready){
+    document.fonts.ready.then(playIntro);
+  } else {
+    window.addEventListener('load', playIntro);
+  }
+
+  window.addEventListener('resize', function(){
+    if (overlay.style.visibility !== 'hidden') positionSubname();
   });
 })();
 </script>
