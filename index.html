@@ -7,7 +7,7 @@
 <meta name="description" content="Bespoke feature walls, beds, and media units, made to measure. [Placeholder — confirm final copy with Dan.]" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,340;9..144,480;9..144,600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,340;9..144,480;9..144,600&family=Manrope:wght@400;500;600&family=Cinzel:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
 <style>
   .hero{
@@ -53,6 +53,42 @@
        a real layout/paint of vector text, not a stretched cached bitmap. */
     transition: opacity 800ms ease, font-size 1900ms cubic-bezier(0.75,0,1,1);
   }
+  .intro-overlay .intro-lockup{
+    position: relative;
+    display: inline-block;
+  }
+  .intro-overlay .reveal-subname{
+    /* Anchored to Bespoke's own box now, not centered above the whole
+       word — left:0 aligns to the "B", JS sets width to the measured
+       width of "Bespok" (through the "k", excluding the trailing "e")
+       and stretches letter-spacing to fill it exactly, same principle
+       as the BOSS/RALPH LAUREN references. --subname-scale is size
+       relative to Bespoke's own clamp(); --subname-drop pulls it down
+       out of the font's empty ascender space so the underline sits at
+       Bespoke's actual cap-height instead of floating above it like a
+       chapter heading; --subname-underline-gap is the text-to-rule gap. */
+    --subname-scale: 0.19;
+    --subname-drop: 0.16;
+    --subname-underline-gap: 0.22em;
+    position: absolute;
+    left: 0;
+    bottom: calc(100% - (clamp(4rem, 19vw, 13.5rem) * var(--subname-drop)));
+    margin: 0;
+    text-align: center;
+    font-family: 'Cinzel', serif; /* per Dan's mock — replaces Mokoto/Manrope */
+    font-weight: 700;
+    letter-spacing: 0.18em; /* base tracking — JS stretches this further to fit the B–k span */
+    text-transform: uppercase;
+    font-size: calc(clamp(4rem, 19vw, 13.5rem) * var(--subname-scale));
+    color: var(--ember, #E8A659);
+    padding-bottom: var(--subname-underline-gap);
+    border-bottom: 0.06em solid var(--ember, #E8A659);
+    opacity: 0;
+    transition: opacity 700ms ease;
+  }
+  .intro-overlay .reveal-subname.is-visible{
+    opacity: 1;
+  }
   .hero .sub{ font-size: clamp(1rem, 1.6vw, 1.15rem); max-width: 42ch; margin: 0.7em 0 1.8em; }
   @media (max-width: 640px){
     .hero-overlay{ background: linear-gradient(180deg, rgba(23,19,15,0.55) 0%, var(--bg) 68%); }
@@ -73,7 +109,10 @@
 <body>
 
 <div class="intro-overlay" id="bespoke-overlay">
-  <h1 class="reveal-text" id="bespoke-text">Bespoke</h1>
+  <div class="intro-lockup">
+    <p class="reveal-subname" id="bespoke-subname">Dan Smith</p>
+    <h1 class="reveal-text" id="bespoke-text">Bespoke</h1>
+  </div>
 </div>
 
 <p class="dev-note wrap">Build in progress — teaser photos are in, body copy still placeholder pending confirmed brand assets and Dan's own voice.</p>
@@ -178,6 +217,7 @@
 (function(){
   var overlay = document.getElementById('bespoke-overlay');
   var text = document.getElementById('bespoke-text');
+  var subname = document.getElementById('bespoke-subname');
   var heroContent = document.querySelector('.hero-content');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -193,11 +233,49 @@
   var OVERLAY_FADE_DURATION = 900;
   var END_SIZE = '300vmax'; // comfortably clears any real viewport in every direction
 
+  // Measures the rendered width of "Bespok" (i.e. through the "k",
+  // excluding the trailing "e" — the span Dan's mock nests the name
+  // inside) and stretches the subname's letter-spacing so it fills
+  // that width exactly, rather than floating centered above the word.
+  function fitSubname(){
+    if (!subname) return;
+    var full = text.textContent;
+    var bkSpan = full.slice(0, full.length - 1);
+    var mainStyle = getComputedStyle(text);
+
+    var probe = document.createElement('span');
+    probe.style.cssText = 'position:absolute; visibility:hidden; white-space:nowrap; top:-9999px; left:-9999px;'
+      + 'font-family:' + mainStyle.fontFamily + ';'
+      + 'font-weight:' + mainStyle.fontWeight + ';'
+      + 'font-size:' + mainStyle.fontSize + ';'
+      + 'letter-spacing:' + mainStyle.letterSpacing + ';';
+    probe.textContent = bkSpan;
+    document.body.appendChild(probe);
+    var targetWidth = probe.getBoundingClientRect().width;
+    document.body.removeChild(probe);
+
+    subname.style.letterSpacing = '';
+    var baseSpacing = parseFloat(getComputedStyle(subname).letterSpacing) || 0;
+    var naturalWidth = subname.getBoundingClientRect().width;
+    var gaps = subname.textContent.trim().length - 1;
+
+    if (gaps > 0 && targetWidth > naturalWidth){
+      var addSpacing = (targetWidth - naturalWidth) / gaps;
+      subname.style.letterSpacing = (baseSpacing + addSpacing) + 'px';
+    }
+    subname.style.width = targetWidth + 'px';
+  }
+
+  fitSubname();
+  window.addEventListener('resize', fitSubname);
+
   requestAnimationFrame(function(){
     requestAnimationFrame(function(){
       text.style.opacity = 1;
+      if (subname) subname.classList.add('is-visible');
       setTimeout(function(){
         text.style.fontSize = END_SIZE;
+        if (subname) subname.classList.remove('is-visible');
       }, ZOOM_START);
       setTimeout(function(){
         text.style.opacity = 0;
