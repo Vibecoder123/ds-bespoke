@@ -9,6 +9,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,340;9..144,480;9..144,600&family=Manrope:wght@400;500;600&family=Cinzel:wght@700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
   .hero{
     position: relative;
@@ -101,7 +104,19 @@
     .hero-content{ animation: none; opacity: 1; transform: none; }
     .intro-overlay{ display: none; }
   }
-  .intro{ max-width: 640px; }
+  .intro{
+    display: grid;
+    grid-template-columns: clamp(130px, 22vw, 250px) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(28px, 6vw, 72px);
+  }
+  .intro-mark{ width: 100%; height: auto; }
+  .intro-copy{ max-width: 640px; }
+  .intro-copy h2 + p{ margin-top: 0.7em; }
+  @media (max-width: 640px){
+    .intro{ grid-template-columns: 1fr; gap: 28px; }
+    .intro-mark{ width: 150px; }
+  }
   .cta-band{
     background: var(--bg-lift);
     padding: var(--space-section) 0;
@@ -143,8 +158,11 @@
 
 <section>
   <div class="wrap intro">
-    <h2>One workshop, one focus: bespoke joinery.</h2>
-    <p>DS Carpentry works exclusively on bespoke joinery — feature walls, statement beds, and made-to-measure media units, built around the room rather than adapted to fit it. [Placeholder — refine into Dan's own voice once confirmed.]</p>
+    <img class="intro-mark" src="img/hammermark.webp" width="673" height="800" alt="DS monogram: the letters D and S interlocked in carved timber, with a hammer and chisel worked into the D" loading="lazy">
+    <div class="intro-copy">
+      <h2>One workshop, one focus: bespoke joinery.</h2>
+      <p>DS Carpentry works exclusively on bespoke joinery — feature walls, statement beds, and made-to-measure media units, built around the room rather than adapted to fit it. [Placeholder — refine into Dan's own voice once confirmed.]</p>
+    </div>
   </div>
 </section>
 
