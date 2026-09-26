@@ -123,6 +123,54 @@
     text-align: left;
   }
   .cta-band .wrap{ display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+
+  /* ---------- Recent commissions: scroll-driven journey ----------
+     Each scene is a tall (200vh) block holding one pinned viewport.
+     Scrolling through that height is what drives the card from its
+     photo to its blurb — no scroll-jacking, no captured wheel events,
+     just real scroll distance read via getBoundingClientRect() so
+     trackpad, touch and keyboard scrolling all move it identically. */
+  .commissions-lead{ padding-bottom: 0; }
+  .commissions-journey{ padding: 0; position: relative; }
+  .scene{ position: relative; height: 200vh; }
+  .scene-sticky{
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    padding-top: clamp(24px, 6vh, 64px);
+  }
+  .scene-sticky .wrap{ width: 100%; display: flex; }
+  .scene:nth-child(1) .scene-sticky .wrap{ justify-content: flex-start; }
+  .scene:nth-child(2) .scene-sticky .wrap{ justify-content: flex-end; }
+  .scene:nth-child(3) .scene-sticky .wrap{ justify-content: center; }
+
+  .journey-card{ width: min(78vw, 780px); height: min(72vh, 620px); }
+  .scene:nth-child(3) .journey-card{ width: min(70vw, 920px); height: min(78vh, 680px); }
+
+  .journey-card .flip-card-back{ flex-direction: column; align-items: flex-start; justify-content: center; gap: 0.5em; }
+  .journey-card .flip-card-back p:not(.eyebrow){ font-size: 1.05rem; }
+
+  @media (max-width: 860px){
+    .scene{ height: 170vh; }
+    .journey-card,
+    .scene:nth-child(3) .journey-card{ width: min(88vw, 560px); height: min(58vh, 480px); }
+    .scene:nth-child(1) .scene-sticky .wrap,
+    .scene:nth-child(2) .scene-sticky .wrap,
+    .scene:nth-child(3) .scene-sticky .wrap{ justify-content: center; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .scene{ height: auto; }
+    .scene-sticky{ position: static; height: auto; padding: var(--space-lg) 0; }
+    .journey-card,
+    .scene:nth-child(3) .journey-card{ width: 100%; max-width: 620px; height: auto; perspective: none; }
+    .journey-card .flip-card-inner{ transform: none !important; height: auto; }
+    .journey-card .flip-card-face{ position: static; inset: auto; backface-visibility: visible; }
+    .journey-card .flip-card-front img{ aspect-ratio: 4 / 3; height: auto; }
+    .journey-card .flip-card-back{ transform: none; margin-top: 1em; border-radius: 2px; }
+  }
 </style>
 </head>
 <body>
@@ -134,14 +182,12 @@
   </div>
 </div>
 
-<p class="dev-note wrap">Build in progress — teaser photos are in, body copy still placeholder pending confirmed brand assets and Dan's own voice.</p>
-
 <header class="site-nav">
   <a class="wordmark" href="index.html">DS Carpentry</a>
   <ul class="nav-links">
     <li><a href="index.html" aria-current="page">Home</a></li>
     <li><a href="work.html">The Work</a></li>
-    <li><a href="process.html">Process</a></li>
+    <li><a href="process.html">The Process</a></li>
     <li><a href="contact.html" class="btn">Enquire</a></li>
   </ul>
 </header>
@@ -151,7 +197,7 @@
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <h1>Bespoke joinery, built the way a suite is built.</h1>
-    <p class="sub">Feature walls, beds, and media units made to measure, for rooms where nothing off-the-shelf is good enough.</p>
+    <p class="sub">Personlised pieces for special spaces — Feature walls, bespoke beds, and media units.</p>
     <a class="cta-link" href="work.html">See recent commissions</a>
   </div>
 </section>
@@ -166,51 +212,62 @@
   </div>
 </section>
 
-<section>
-  <div class="wrap">
-    <div class="section-head">
-      <h2>Recent commissions</h2>
-    </div>
-    <div class="grid cols-3">
-      <figure class="photo">
-        <div class="flip-card" tabindex="0" role="button" aria-pressed="false" aria-label="LED feature wall — click for detail">
+<section class="commissions-lead">
+  <div class="wrap section-head">
+    <h2>Recent commissions</h2>
+  </div>
+</section>
+
+<section class="commissions-journey">
+  <div class="scene">
+    <div class="scene-sticky">
+      <div class="wrap">
+        <div class="flip-card journey-card" tabindex="0" role="group" aria-label="LED feature wall" data-scroll-driven>
           <div class="flip-card-inner">
             <div class="flip-card-face flip-card-front">
-              <img src="img/work/led-feature-wall.jpg" alt="Recessed LED-lit display niches either side of a built-in TV and fire" loading="lazy">
+              <img src="img/work/led-feature-wall.webp" alt="Recessed LED-lit display niches either side of a built-in TV and fire" loading="eager">
             </div>
             <div class="flip-card-face flip-card-back">
+              <p class="eyebrow">LED feature wall</p>
               <p>[Placeholder — a line or two on the niche lighting, the fire integration, and why this layout suited the room.]</p>
             </div>
           </div>
         </div>
-        <figcaption>LED feature wall</figcaption>
-      </figure>
-      <figure class="photo">
-        <div class="flip-card" tabindex="0" role="button" aria-pressed="false" aria-label="Bali-style bed frame — click for detail">
+      </div>
+    </div>
+  </div>
+  <div class="scene">
+    <div class="scene-sticky">
+      <div class="wrap">
+        <div class="flip-card journey-card" tabindex="0" role="group" aria-label="Bali-style bed frame" data-scroll-driven>
           <div class="flip-card-inner">
             <div class="flip-card-face flip-card-front">
-              <img src="img/work/bali-bed-frame.jpg" alt="Bali-style canopy bed with radiating LED strips across a reclaimed-wood ceiling" loading="lazy">
+              <img src="img/work/bali-bed-frame.webp" alt="Bali-style canopy bed with radiating LED strips across a reclaimed-wood ceiling" loading="lazy">
             </div>
             <div class="flip-card-face flip-card-back">
+              <p class="eyebrow">Bali-style bed frame</p>
               <p>[Placeholder — a line or two on the canopy construction, the LED detailing, and the brief behind it.]</p>
             </div>
           </div>
         </div>
-        <figcaption>Bali-style bed frame</figcaption>
-      </figure>
-      <figure class="photo">
-        <div class="flip-card" tabindex="0" role="button" aria-pressed="false" aria-label="Walnut media wall — click for detail">
+      </div>
+    </div>
+  </div>
+  <div class="scene">
+    <div class="scene-sticky">
+      <div class="wrap">
+        <div class="flip-card journey-card" tabindex="0" role="group" aria-label="Walnut media wall" data-scroll-driven>
           <div class="flip-card-inner">
             <div class="flip-card-face flip-card-front">
-              <img src="img/work/walnut-media-wall.jpg" alt="Reclaimed wood media wall with an integrated woodburner" loading="lazy">
+              <img src="img/work/walnut-media-wall.webp" alt="Reclaimed wood media wall with an integrated woodburner" loading="lazy">
             </div>
             <div class="flip-card-face flip-card-back">
+              <p class="eyebrow">Walnut media wall</p>
               <p>[Placeholder — a line or two on the reclaimed timber, the woodburner integration, and the room it was built for.]</p>
             </div>
           </div>
         </div>
-        <figcaption>Walnut media wall</figcaption>
-      </figure>
+      </div>
     </div>
   </div>
 </section>
@@ -218,7 +275,7 @@
 <section class="cta-band">
   <div class="wrap">
     <h2 style="max-width: 20ch;">Have a room that needs something nothing off-the-shelf can do?</h2>
-    <a class="btn" href="contact.html">Start a conversation</a>
+    <a class="btn" href="contact.html">Book a home consultation</a>
   </div>
 </section>
 
@@ -331,6 +388,62 @@
   window.addEventListener('resize', function(){
     if (overlay.style.visibility !== 'hidden') positionSubname();
   });
+})();
+</script>
+
+<script>
+// Recent-commissions scroll journey. Reads real scroll position via
+// getBoundingClientRect() rather than capturing wheel/touch events, so
+// trackpad, touch and keyboard scrolling all drive it the same way and
+// native scrolling is never overridden. Reduced-motion visitors get the
+// static stacked layout from the CSS above instead, so this script does
+// nothing for them.
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var scenes = Array.prototype.slice.call(document.querySelectorAll('.commissions-journey .scene'));
+  if (reduced || !scenes.length) return;
+
+  var cards = scenes.map(function(scene){ return scene.querySelector('.journey-card'); });
+  var ticking = false;
+  var FLIP_AT = 0.45; // fraction of each scene's pin range scrolled before it flips
+
+  function update(){
+    var vh = window.innerHeight;
+    scenes.forEach(function(scene, i){
+      var rect = scene.getBoundingClientRect();
+      var travel = rect.height - vh;
+      var progress = travel > 0 ? Math.min(Math.max(-rect.top, 0), travel) / travel : 0;
+      var card = cards[i];
+      var flipped = progress > FLIP_AT;
+      if (card.classList.contains('is-flipped') !== flipped){
+        card.classList.toggle('is-flipped', flipped);
+      }
+    });
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function(){
+    if (!ticking){ requestAnimationFrame(update); ticking = true; }
+  }, { passive: true });
+  window.addEventListener('resize', update);
+
+  // Tabbing without a mouse: focusing a card scrolls its scene to the
+  // point in its pin range where the flip has already triggered, so
+  // Tab alone advances the journey the same way scrolling does.
+  cards.forEach(function(card, i){
+    card.addEventListener('focus', function(){
+      var scene = scenes[i];
+      var vh = window.innerHeight;
+      var rect = scene.getBoundingClientRect(); // absolute page top, unlike offsetTop
+      var top = rect.top + window.scrollY;
+      var travel = rect.height - vh;
+      if (travel > 0){
+        window.scrollTo({ top: top + travel * (FLIP_AT + 0.15), behavior: 'smooth' });
+      }
+    });
+  });
+
+  update();
 })();
 </script>
 
