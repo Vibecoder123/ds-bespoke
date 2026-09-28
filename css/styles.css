@@ -393,3 +393,82 @@ button.submit{
 }
 
 button.submit:hover{ background: var(--ember); }
+
+/* ---------- Service areas (js/areas.js) ---------- */
+
+.area{ position: relative; display: inline-block; }
+
+.area-trigger{
+  font: inherit;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--brass);
+  padding: 0 0 0.12em;
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.area-trigger:hover,
+.area-trigger[aria-expanded="true"]{ color: var(--brass); }
+
+.area-pop{
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 30;
+  padding-top: 10px;
+}
+
+.area-pop[hidden]{ display: none; }
+
+.area-pop-card{
+  display: block;
+  width: max-content;
+  max-width: min(300px, calc(100vw - 40px));
+  background: var(--bg-lift-2);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  animation: area-in 160ms ease-out both;
+}
+
+.area-pop-label{
+  display: block;
+  font-size: 0.8rem;
+  color: var(--brass);
+  margin-bottom: 0.3em;
+}
+
+.areas--feature{
+  color: var(--ink);
+  font-size: 1.05rem;
+  margin-top: 1.4em;
+}
+
+.section-head .areas{ margin-top: 1em; }
+
+.areas--up .area-pop{
+  top: auto;
+  bottom: 100%;
+  padding-top: 0;
+  padding-bottom: 10px;
+}
+
+.site-footer .area-trigger{ color: var(--ink-soft); }
+.site-footer .area-trigger:hover,
+.site-footer .area-trigger[aria-expanded="true"]{ color: var(--brass); }
+
+@keyframes area-in{
+  from{ opacity: 0; transform: translateY(4px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .area-pop-card{ animation: none; }
+}
