@@ -12,6 +12,12 @@
 <link rel="icon" href="favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<script>
+  // Runs before first paint: if the intro already played in this tab
+  // session, flag <html> so the CSS below hides the overlay instantly
+  // (no flash of the dark screen on return visits to Home).
+  try { if (sessionStorage.getItem('ds-intro-seen')) document.documentElement.classList.add('intro-seen'); } catch (e) {}
+</script>
 <style>
   .hero{
     position: relative;
@@ -35,6 +41,10 @@
     animation: rise 1900ms cubic-bezier(0.16, 1, 0.3, 1) 200ms forwards;
   }
   @keyframes rise{ to{ opacity: 1; transform: translateY(0); } }
+
+  /* Return visits within the same session: skip the intro, hero at rest. */
+  .intro-seen .intro-overlay{ display: none; }
+  .intro-seen .hero-content{ opacity: 1; transform: none; }
 
   /* --- Bespoke intro overlay --- */
   .intro-overlay{
@@ -305,6 +315,8 @@
   // Reduced motion: CSS already shows hero-content at rest and hides the
   // overlay outright, so there is nothing for this script to trigger.
   if (reduced || !overlay || !text) return;
+  // Already played this session: the head script and CSS have handled it.
+  if (document.documentElement.classList.contains('intro-seen')) return;
 
   var FADE_IN = 800;
   var HOLD = 600;
@@ -373,6 +385,8 @@
           // Headline rise triggers here — the instant the overlay is fully
           // out of the way, not on page load.
           if (heroContent) heroContent.classList.add('rise-in');
+          // Mark as seen only once it has fully played.
+          try { sessionStorage.setItem('ds-intro-seen', '1'); } catch (e) {}
         }, OVERLAY_FADE_START + OVERLAY_FADE_DURATION);
       });
     });
