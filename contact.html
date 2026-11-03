@@ -14,7 +14,7 @@
 </head>
 <body>
 
-<p class="dev-note wrap">Form is NOT wired to a backend yet — it will not deliver a submission right now. Per standard practice on every other client build: confirm a Formspree (or equivalent) endpoint, test end-to-end, and build a real error state before this ever goes live. Do not treat the presence of this markup as "done."</p>
+<p class="dev-note wrap">Form endpoint is a placeholder until Dan's Formspree account exists, so every submission shows the error message and nothing is sent. Swap the form's action URL, then test end to end before launch.</p>
 
 <header class="site-nav bordered">
   <a class="wordmark" href="index.html">DS Carpentry</a>
@@ -34,7 +34,8 @@
       <p class="areas">Bespoke joinery across <span data-area="hampshire">Hampshire</span> and into <span data-area="surrey">Surrey</span> and <span data-area="berkshire">Berkshire</span></p>
     </div>
 
-    <form class="contact-form" action="#" method="POST">
+    <!-- Formspree endpoint: replace YOUR_FORM_ID with the ID from Dan's Formspree form. Nothing is sent until it is. -->
+    <form class="contact-form" id="enquiry-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
       <div class="field">
         <label for="name">Name</label>
         <input id="name" name="name" type="text" required autocomplete="name">
@@ -51,8 +52,14 @@
         <label for="message">Tell us about the project</label>
         <textarea id="message" name="message" rows="5" required></textarea>
       </div>
+      <div class="hp" aria-hidden="true">
+        <label for="website">Leave this field empty</label>
+        <input id="website" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
+      </div>
       <button class="submit" type="submit">Send Enquiry</button>
+      <p class="form-status form-status--error" id="form-error" role="alert" hidden></p>
     </form>
+    <p class="form-status form-status--success" id="form-success" role="status" tabindex="-1" hidden>Thank you, your enquiry has been sent. We'll be in touch to arrange a time to see the room.</p>
   </div>
 </section>
 
@@ -64,5 +71,6 @@
 </footer>
 
 <script src="js/areas.js" defer></script>
+<script src="js/contact-form.js" defer></script>
 </body>
 </html>

@@ -394,6 +394,36 @@ button.submit{
 
 button.submit:hover{ background: var(--ember); }
 
+button.submit:disabled{
+  background: var(--ink-faint);
+  cursor: wait;
+}
+
+/* Honeypot: off-screen for people, still filled in by most spam bots. */
+.hp{
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Submission messages (js/contact-form.js) */
+.form-status{
+  max-width: 520px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  padding: 0.9em 1.1em;
+  border-radius: 2px;
+  background: var(--bg-lift);
+  color: var(--ink);
+}
+.form-status--error{ border-left: 3px solid var(--ember); }
+.form-status--success{ border-left: 3px solid var(--brass); }
+.form-status--success:focus{ outline: none; }
+form.contact-form[hidden]{ display: none; }
+.form-status a{ color: var(--brass); }
+
 /* ---------- Service areas (js/areas.js) ---------- */
 
 .area{ position: relative; display: inline-block; }
