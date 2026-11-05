@@ -250,6 +250,14 @@ section + section{ padding-top: 0; }
   font-style: italic;
 }
 
+/* Set by js/flip-cards.js only when a blurb can't fit even at its smallest
+   size (extreme zoom). Starts the text at the top and lets it scroll. */
+.flip-card .flip-card-back.blurb-overflow{
+  align-items: flex-start;
+  justify-content: flex-start;
+  overflow-y: auto;
+}
+
 @media (prefers-reduced-motion: reduce){
   .flip-card-inner{ transition: none; }
 }
