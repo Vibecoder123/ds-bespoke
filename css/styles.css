@@ -66,6 +66,20 @@ p + p{ margin-top: 1em; }
   margin: 0 0 0.6em;
 }
 
+.pull-quote{
+  margin: 2.2em 0 0;
+  padding-left: 1.2em;
+  border-left: 2px solid var(--brass);
+}
+.pull-quote blockquote{ margin: 0; }
+.pull-quote blockquote p{
+  font-family: 'Fraunces', serif;
+  font-weight: 340;
+  font-size: 1.15rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
 /* ---------- Nav ---------- */
 
 .site-nav{
