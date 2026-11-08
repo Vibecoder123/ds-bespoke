@@ -1,8 +1,11 @@
 // Build deck on the Process page (step 3). Three photos sit stacked, the
 // current one in front and the next two stepped down and right behind it.
-// Clicking the deck or the arrow button advances it: the front photo drops
-// down and slots in at the back of the line, and the next photo swings up
-// and to the left, turning anti-clockwise, into the front slot.
+// The whole stack is one button (an invisible .deck-hit laid over it), so a
+// click, a tap, or Enter/Space on keyboard focus advances it: the front
+// photo drops down and slots in at the back of the line, and the next photo
+// swings up and to the left, turning anti-clockwise, into the front slot.
+// Screen readers hear "Next photo" on the button and, after each move, the
+// new position and that photo's description from a hidden live region.
 // Resting positions live in styles.css (data-slot 0, 1, 2); this script only
 // runs the move between them, then hands back to the CSS. No dependencies.
 // Reduced-motion visitors get the same order change with no movement.
@@ -12,23 +15,30 @@
 
   const stage = deck.querySelector('.deck-stage');
   const cards = Array.from(deck.querySelectorAll('.deck-card'));
-  const controls = deck.querySelector('.deck-controls');
-  const nextBtn = deck.querySelector('.deck-next');
-  const countShown = deck.querySelector('.deck-count [aria-hidden]');
-  const countSpoken = deck.querySelector('.deck-count .sr-only');
+  const hit = deck.querySelector('.deck-hit');
+  const status = deck.querySelector('[data-deck-status]');
   const total = cards.length;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
+  // Timings. DURATION is the whole move in ms, run on one easing curve so
+  // the motion never stops part-way. The points below are progress along
+  // that curve (0 to 1). The outgoing photo fades out completely between
+  // FADE_START and FADE_END while it drops, so the eye moves to the
+  // incoming photo instead of following it; at SWAP, already invisible, it
+  // passes behind the stack, and it only fades back in from FADE_BACK, once
+  // it has nearly reached the back of the line.
   const DURATION = 950;
   const EASE = 'cubic-bezier(0.45, 0.05, 0.25, 1)';
+  const FADE_START = 0.08;
+  const FADE_END = 0.4;
+  const SWAP = 0.45;
+  const FADE_BACK = 0.85;
   const SHADE = [0, 0.4, 0.6];
 
   let current = 0; // index (in DOM order) of the photo in front
   let busy = false;
 
-  controls.hidden = false;
-
-  const pad = (n) => String(n).padStart(2, '0');
+  hit.hidden = false;
 
   const slotOf = (card) => Number(card.dataset.slot);
 
@@ -42,8 +52,8 @@
       if (slot === 0) card.removeAttribute('aria-hidden');
       else card.setAttribute('aria-hidden', 'true');
     });
-    countShown.textContent = `${pad(current + 1)} / ${pad(total)}`;
-    countSpoken.textContent = `Photo ${current + 1} of ${total}`;
+    const alt = cards[current].querySelector('img').alt;
+    status.textContent = `Photo ${current + 1} of ${total}. ${alt}`;
   };
 
   const advance = () => {
@@ -65,36 +75,43 @@
     const w = stage.offsetWidth;
     const h = stage.offsetHeight;
     const back = (total - 1) * d;
+    // Every animation shares one duration and one easing curve, and the
+    // stacking swap sits in the same keyframe lists as the movement, so all
+    // of it stays in step. Keyframes that leave a property out are skipped
+    // for that property, which lets the fade and swap points sit between
+    // the movement points without adding stops.
     const opts = { duration: DURATION, easing: EASE, fill: 'forwards' };
+    const drop = `translate(${back + w * 0.05}px, ${back + h * 0.2}px) scale(0.94)`;
     const runs = [];
 
-    // Front photo: drops down and right, clear of the stack, tucks behind
-    // it at the halfway point, then settles into the last slot.
+    // Front photo: drops down and right, fading out completely as it goes;
+    // passes behind the stack at SWAP while invisible, then settles into
+    // the last slot and fades back in under its shade.
     runs.push(front.animate([
-      { transform: 'translate(0px, 0px) scale(1)' },
-      { transform: `translate(${back + w * 0.05}px, ${back + h * 0.2}px) scale(0.94)`, offset: 0.45 },
-      { transform: `translate(${back}px, ${back}px) scale(1)` }
+      { transform: 'translate(0px, 0px) scale(1)', opacity: 1, zIndex: 3 },
+      { opacity: 1, offset: FADE_START },
+      { opacity: 0, offset: FADE_END },
+      { transform: drop, zIndex: 3, offset: SWAP },
+      { transform: drop, zIndex: 0, offset: SWAP },
+      { opacity: 0, offset: FADE_BACK },
+      { transform: `translate(${back}px, ${back}px) scale(1)`, opacity: 1, zIndex: 0 }
     ], opts));
     runs.push(front.querySelector('.deck-shade').animate(
       [{ opacity: SHADE[0] }, { opacity: SHADE[total - 1] }], opts));
 
     // Next photo: swings up and to the left on an anti-clockwise arc,
     // tilting anti-clockwise as it rises, and lands square in the front slot.
-    // It stays under the front photo until that one has dropped clear.
+    // Its shade lifts as the front photo fades, so it's clear by SWAP.
     runs.push(rising.animate([
-      { transform: `translate(${d}px, ${d}px) rotate(0deg)` },
+      { transform: `translate(${d}px, ${d}px) rotate(0deg)`, zIndex: 2 },
       { transform: `translate(${d + w * 0.035}px, ${d - h * 0.05}px) rotate(-3deg)`, offset: 0.3 },
+      { zIndex: 2, offset: SWAP },
+      { zIndex: 4, offset: SWAP },
       { transform: `translate(${w * 0.01}px, ${-h * 0.04}px) rotate(-5deg)`, offset: 0.62 },
-      { transform: 'translate(0px, 0px) rotate(0deg)' }
+      { transform: 'translate(0px, 0px) rotate(0deg)', zIndex: 4 }
     ], opts));
-
-    // Stacking swaps in one step at the halfway point, once the front photo
-    // has dropped clear: it goes to the back, the rising one to the front.
-    const half = (from, to) => [{ zIndex: from }, { zIndex: from, offset: 0.45 }, { zIndex: to, offset: 0.45 }, { zIndex: to }];
-    runs.push(front.animate(half(3, 0), { duration: DURATION, fill: 'forwards' }));
-    runs.push(rising.animate(half(2, 4), { duration: DURATION, fill: 'forwards' }));
     runs.push(rising.querySelector('.deck-shade').animate(
-      [{ opacity: SHADE[1] }, { opacity: 0, offset: 0.62 }, { opacity: 0 }], opts));
+      [{ opacity: SHADE[1] }, { opacity: 0, offset: SWAP }, { opacity: 0 }], opts));
 
     // The rest move up one place in the line.
     others.forEach((card) => {
@@ -114,6 +131,5 @@
     });
   };
 
-  stage.addEventListener('click', advance);
-  nextBtn.addEventListener('click', advance);
+  hit.addEventListener('click', advance);
 })();

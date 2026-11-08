@@ -368,7 +368,6 @@ section + section{ padding-top: 0; }
   aspect-ratio: 3 / 2;
   margin-right: calc(var(--deck-off) * 2);
   margin-bottom: calc(var(--deck-off) * 2);
-  cursor: pointer;
   isolation: isolate; /* keeps the cards' z-index swaps inside the deck */
 }
 
@@ -407,49 +406,37 @@ section + section{ padding-top: 0; }
 .deck-card[data-slot="1"] .deck-shade{ opacity: 0.4; }
 .deck-card[data-slot="2"] .deck-shade{ opacity: 0.6; }
 
-.deck-stage:hover .deck-card[data-slot="0"]{
+/* The whole stack is the control: an invisible button laid over the front
+   photo and the edges behind it. One target for mouse, touch and keyboard.
+   Its label ("Next photo") is for screen readers only, and keyboard focus
+   shows on the front photo as the same brass ring as the flip cards. */
+.deck-hit{
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: calc(var(--deck-off) * -2);
+  bottom: calc(var(--deck-off) * -2);
+  z-index: 5;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.deck-hit[hidden]{ display: none; }
+.deck-hit:focus{ outline: none; }
+.deck-hit:focus-visible{ outline: 1px solid var(--brass); outline-offset: 6px; }
+@supports selector(:has(*)){
+  .deck-hit:focus-visible{ outline: none; }
+}
+
+.deck-stage:hover .deck-card[data-slot="0"],
+.deck-stage:has(.deck-hit:focus-visible) .deck-card[data-slot="0"]{
   box-shadow:
     0 0 0 1px var(--brass),
     0 16px 54px -4px rgba(232, 166, 89, 0.75),
     0 5px 20px rgba(0, 0, 0, 0.55);
-}
-
-.deck-controls{
-  position: relative;
-  z-index: 1; /* stays above a photo as it drops to the back */
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  margin-top: 18px;
-}
-.deck-controls[hidden]{ display: none; }
-
-.deck-next{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background: transparent;
-  color: var(--ink);
-  cursor: pointer;
-  transition: border-color 180ms ease, color 180ms ease;
-}
-.deck-next:hover,
-.deck-next:focus-visible{
-  border-color: var(--brass);
-  color: var(--brass);
-  outline: none;
-}
-
-.deck-count{
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  color: var(--ink-faint);
-  font-variant-numeric: tabular-nums;
 }
 
 .sr-only{
