@@ -66,11 +66,32 @@ p + p{ margin-top: 1em; }
   margin: 0 0 0.6em;
 }
 
+/* Process page layout on wide screens (1000px and up).
+   --bio-reach is the width of "Based in the historic" in the body font, so the
+   opening paragraph reaching left by it puts the end of "historic" in line
+   with the pull quote's brass rule. The paragraph reaches right by the same
+   amount. "About Dan" moves left with it. The steps section below then shifts
+   its heading and step list in, so "How a commission comes together" starts
+   on the same line as "About Dan" and the paragraph; its right edge stays
+   put. The shift is the gap between the two centred columns:
+   (steps column - bio column) / 2, where the bio column is 680px minus the
+   .wrap gutters plus two reaches. Below 1000px nothing changes. */
+@media (min-width: 1000px){
+  :root{ --bio-reach: 150px; }
+  .bio-wide{ margin-left: calc(var(--bio-reach) * -1); margin-right: calc(var(--bio-reach) * -1); }
+  .bio-wide-head{ margin-left: calc(var(--bio-reach) * -1); }
+  .steps-wrap > .section-head,
+  .steps-wrap > .steps{
+    margin-left: calc((100% + 2 * clamp(20px, 5vw, 64px) - 680px - 2 * var(--bio-reach)) / 2);
+  }
+}
+
 .pull-quote{
-  margin: 2.2em 0 0;
+  margin: 3.85em 0 0; /* 2.2em plus one extra body line (1.65em) of space */
   padding-left: 1.2em;
   border-left: 2px solid var(--brass);
 }
+.pull-quote .eyebrow{ font-size: 1rem; } /* up from the 0.85rem eyebrow, to sit with the quote */
 .pull-quote blockquote{ margin: 0; }
 .pull-quote blockquote p{
   font-family: 'Fraunces', serif;
