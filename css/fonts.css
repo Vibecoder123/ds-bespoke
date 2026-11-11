@@ -120,3 +120,19 @@
   src: url(../fonts/cinzel-latin-ext-700-normal.woff2) format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
+
+/* Fraunces italic for the Process page eyebrow "A word from Dan" only.
+   Cut from Fontsource 5.3.0 @fontsource-variable/fraunces
+   (fraunces-latin-opsz-italic.woff2, 81 KB) down to the letters in that
+   phrase plus the space, keeping the opsz and wght axes: 7.6 KB. Separate
+   family name, so nothing else on the site can pick it up. If the eyebrow
+   text changes, letters outside the cut fall back to the browser slanting
+   upright Fraunces; re-cut with pyftsubset --text="<new text>" to fix.
+   Modified under SIL OFL 1.1 (no reserved font name); licence in /fonts. */
+@font-face{
+  font-family: 'Fraunces Eyebrow';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url(../fonts/fraunces-italic-eyebrow.woff2) format('woff2');
+}

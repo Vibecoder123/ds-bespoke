@@ -91,7 +91,14 @@ p + p{ margin-top: 1em; }
   padding-left: 1.2em;
   border-left: 2px solid var(--brass);
 }
-.pull-quote .eyebrow{ font-size: 1rem; } /* up from the 0.85rem eyebrow, to sit with the quote */
+/* The quote's eyebrow is set in true Fraunces italic (a 7.6 KB cut, see
+   fonts.css) to match the quote, at 1rem, up from the 0.85rem eyebrow. */
+.pull-quote .eyebrow{
+  font-family: 'Fraunces Eyebrow', 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 480;
+  font-size: 1rem;
+}
 .pull-quote blockquote{ margin: 0; }
 .pull-quote blockquote p{
   font-family: 'Fraunces', serif;
