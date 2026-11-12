@@ -559,13 +559,8 @@ button.submit:disabled{
 }
 
 /* Honeypot: off-screen for people, still filled in by most spam bots. */
-.hp{
-  position: absolute;
-  left: -9999px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
+/* Honeypot: display:none per Formspree's docs, so browser autofill skips it */
+.hp{ display: none; }
 
 /* Submission messages (js/contact-form.js) */
 .form-status{
