@@ -131,6 +131,16 @@ p + p{ margin-top: 1em; }
 
 .wordmark span{ color: var(--ink-soft); font-weight: 400; }
 
+.wordmark img{
+  display: block;
+  height: 36px;
+  width: auto;
+}
+
+@media (max-width: 560px){
+  .wordmark img{ height: 32px; }
+}
+
 .nav-links{
   display: flex;
   align-items: center;
